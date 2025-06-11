@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "70615884437",
+    "project_id": "onlinelibraryapp-21ff3",
+    "storage_bucket": "onlinelibraryapp-21ff3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70615884437:android:50ce09867b9a1473ee719c",
+        "android_client_info": {
+          "package_name": "com.example.libraryapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70615884437-qic2v36h1pnnfiddas5n45tetu4gjjmv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzN8qoAJdSaWmJkd3ZSsNm6eLJqi5ByAc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70615884437-qic2v36h1pnnfiddas5n45tetu4gjjmv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

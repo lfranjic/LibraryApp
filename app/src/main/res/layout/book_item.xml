@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/bookTitle"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#2a2a2a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/bookAuthor"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#2b2b2b"/>
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Book"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp"/>
+
+    <Space
+        android:layout_width="16dp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/readButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Read book"
+        android:textColor="#FFFFFF"
+        android:visibility="gone"/>
+
+    <Space
+        android:layout_width="16dp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Delete book"
+        android:textColor="#FFFFFF"
+        android:visibility="gone"/>
+
+</LinearLayout>
