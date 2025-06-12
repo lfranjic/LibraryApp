@@ -142,8 +142,6 @@ class MainActivity : AppCompatActivity() {
                             emptyTextView.visibility = View.VISIBLE
                             recyclerView.visibility = View.GONE
 
-
-
                             adapter.updateList(
                                 emptyList(),
                                 showSaveButton = true,
@@ -374,6 +372,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("DeleteDebug", "Failed to delete book: $bookId", it)
             }
     }
+
 
     private fun showRandomBook() {
         if (currentBooks.isNotEmpty()) {
