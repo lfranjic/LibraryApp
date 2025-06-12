@@ -246,20 +246,31 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveBookToFirestore(book: Book) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val userBooksRef = db.collection("users").document(userId).collection("savedBooks")
+        val db = FirebaseFirestore.getInstance()
 
-        val data = hashMapOf(
-            "title" to book.title,
-            "author" to book.author,
-            "htmlUrl" to book.htmlUrl
-        )
+        val bookId = book.id ?: return // Ensure the book has an ID
 
-        userBooksRef.add(data)
-            .addOnSuccessListener {
-                ToastUtils.showCustomToast(this, "Book saved.")
+        val docRef = db.collection("users")
+            .document(userId)
+            .collection("savedBooks")
+            .document(bookId)
+
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    ToastUtils.showCustomToast(this, "Book already saved")
+                } else {
+                    docRef.set(book)
+                        .addOnSuccessListener {
+                            ToastUtils.showCustomToast(this, "Book saved")
+                        }
+                        .addOnFailureListener {
+                            ToastUtils.showCustomToast(this, "Failed to save book")
+                        }
+                }
             }
-            .addOnFailureListener { e ->
-                ToastUtils.showCustomToast(this, "Error saving book.")
+            .addOnFailureListener {
+                ToastUtils.showCustomToast(this, "Failed to check saved books")
             }
     }
 
