@@ -1,7 +1,12 @@
 package com.example.libraryapp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import android.util.Xml
@@ -28,12 +33,38 @@ import org.xmlpull.v1.XmlPullParser
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: BookAdapter
     private val db = FirebaseFirestore.getInstance()
+
+    private lateinit var sensorManager: SensorManager
+    private var accel = 0f
+    private var accelCurrent = 0f
+    private var accelLast = 0f
+    private var currentBooks: List<Book> = emptyList()
+
+    private val sensorListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val x = event.values[0]
+            val y = event.values[1]
+            val z = event.values[2]
+
+            accelLast = accelCurrent
+            accelCurrent = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+            val delta = accelCurrent - accelLast
+            accel = accel * 0.9f + delta
+
+            if (accel > 12) {
+                showRandomBook()
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +78,17 @@ class MainActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager.registerListener(
+            sensorListener,
+            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+
+        accel = 10f
+        accelCurrent = SensorManager.GRAVITY_EARTH
+        accelLast = SensorManager.GRAVITY_EARTH
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val searchButton = findViewById<Button>(R.id.searchButton)
@@ -95,10 +137,12 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         }.awaitAll()
-
+                        currentBooks = books
                         if (books.isEmpty()) {
                             emptyTextView.visibility = View.VISIBLE
                             recyclerView.visibility = View.GONE
+
+
 
                             adapter.updateList(
                                 emptyList(),
@@ -329,5 +373,28 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Log.e("DeleteDebug", "Failed to delete book: $bookId", it)
             }
+    }
+
+    private fun showRandomBook() {
+        if (currentBooks.isNotEmpty()) {
+            val randomBook = currentBooks.random()
+            ToastUtils.showCustomToast(this, " ${randomBook.title} by ${randomBook.author}")
+        } else {
+            ToastUtils.showCustomToast(this, "No books available. Try searching first!")
+        }
+    }
+
+    override fun onPause() {
+        sensorManager.unregisterListener(sensorListener)
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(
+            sensorListener,
+            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 }
