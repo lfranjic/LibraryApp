@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()
 
-        val bookId = book.id ?: return // Ensure the book has an ID
+        val bookId = book.id ?: return
 
         val docRef = db.collection("users")
             .document(userId)
@@ -270,7 +270,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
-                ToastUtils.showCustomToast(this, "Failed to check saved books")
+                ToastUtils.showCustomToast(this, "Failed to fetch saved books")
             }
     }
 
@@ -280,26 +280,26 @@ class MainActivity : AppCompatActivity() {
             .collection("savedBooks")
             .get()
             .addOnSuccessListener { result ->
-                val savedBooks = result.map { doc ->
-                    val book = doc.toObject(Book::class.java)
-                    book.id = doc.id
-                    book
+                val saved = result.toObjects(Book::class.java)
+
+                if (saved.isEmpty()) {
+                    ToastUtils.showCustomToast(this, "No saved books found")
                 }
+
                 adapter.updateList(
-                    savedBooks,
+                    saved,
                     showSaveButton = false,
                     showReadButton = true,
                     showDeleteButton = true,
                     onSaveClick = null,
                     onReadClick = { book -> openBookInWebView(book) },
                     onDeleteClick = { book ->
-                        if (book.id != null) {
-                            deleteBookFromSavedBooks(userId, book.id!!)
-                        } else {
-                            Log.e("DeleteDebug", "Book ID is null, can't delete")
-                        }
+                        deleteBookFromSavedBooks(userId, book.id!!)
                     }
                 )
+            }
+            .addOnFailureListener {
+                ToastUtils.showCustomToast(this, "Failed to fetch saved books")
             }
     }
 
